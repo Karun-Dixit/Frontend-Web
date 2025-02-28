@@ -12,6 +12,7 @@ const PublicDashboard = lazy(() => import("./components/public/PublicDashboard")
 const EditProduct = lazy(() => import("./components/private/Products/EditProduct"));
 const Users = lazy(() => import("./components/private/Users/Users"));
 const PublicNavbar = lazy(() => import("./components/common/customer/PublicNavbar"));
+const Footer = lazy(() => import("./components/common/customer/Footer"));
 
 function App() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -28,6 +29,7 @@ function App() {
     { path: "/register", element: <Suspense fallback={<div>Loading...</div>}><Register /></Suspense>, errorElement: <div>Error</div> },
     { path: "/dashboard", element: <Suspense fallback={<div>Loading...</div>}><PublicDashboard /></Suspense>, errorElement: <div>Error</div> },
     { path: "/PublicNavbar", element: <Suspense fallback={<div>Loading...</div>}><PublicNavbar /></Suspense>, errorElement: <div>Error</div> },
+    { path: "/Footer", element: <Suspense fallback={<div>Loading...</div>}><Footer /></Suspense>, errorElement: <div>Error</div> },
     { path: "*", element: <div>404: Page not found</div> },
   ];
 
