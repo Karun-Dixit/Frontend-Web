@@ -219,19 +219,59 @@ const PublicDashboard = () => {
                 </Slider>
               </div>
             </div>
+
+            {/* Top Picks Section */}
+            <div className="mb-16">
+              <h1 className="text-4xl font-semibold text-left mb-8 tracking-wide text-gray-800">
+                Top Picks
+              </h1>
+              <div className="px-4">
+                <Slider {...sliderSettings}>
+                  {productSections[2].products.map((product) => (
+                    <div key={product.id} className="px-4 transition-all transform hover:scale-105">
+                      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 ease-in-out">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-56 object-cover rounded-lg mb-6 transition-transform duration-300 ease-in-out hover:scale-110"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=Image+Not+Found'; }}
+                        />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                        <p className="text-gray-700 text-lg font-medium mb-4">Rs {product.price}</p>
+                        <p className="text-gray-600 text-sm mb-6">{product.description}</p>
+                        {/* Add to Cart Button */}
+                        <button
+                          className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out"
+                          onClick={() => handleAddToCart(product.name)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </div>
           </>
         )}
       </div>
 
       {/* Footer */}
       <div className="bg-gray-800 text-white py-8">
-        <div className="container mx-auto text-center">
-          <p className="text-sm">© 2025 TechCycle. All rights reserved.</p>
-          <div className="mt-4">
-            <a href="/about" className="text-gray-400 hover:text-white mx-4">About Us</a>
-            <a href="/contact" className="text-gray-400 hover:text-white mx-4">Contact</a>
-            <a href="/privacy" className="text-gray-400 hover:text-white mx-4">Privacy Policy</a>
-            <a href="/terms" className="text-gray-400 hover:text-white mx-4">Terms of Service</a>
+        <div className="container mx-auto flex justify-between">
+          <div className="text-sm">
+            <h4 className="font-semibold">TechCycle</h4>
+            <p className="mt-2">Your trusted platform for second-hand electronics.</p>
+          </div>
+          <div className="text-sm">
+            <h4 className="font-semibold">Links</h4>
+            <ul className="mt-2">
+              <li><a href="/" className="hover:text-blue-400">Home</a></li>
+              <li><a href="/about" className="hover:text-blue-400">About Us</a></li>
+              <li><a href="/contact" className="hover:text-blue-400">Contact</a></li>
+              <li><a href="/privacy" className="hover:text-blue-400">Privacy Policy</a></li>
+              <li><a href="/terms" className="hover:text-blue-400">Terms of Service</a></li>
+            </ul>
           </div>
         </div>
       </div>
