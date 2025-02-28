@@ -6,7 +6,12 @@ import 'slick-carousel/slick/slick.css';
 import PublicNavbar from '../common/customer/PublicNavbar';
 
 const PublicDashboard = () => {
-  const [productSections] = useState([
+  const [searchTerm, setSearchTerm] = useState('');
+  const [cartMessage, setCartMessage] = useState('');
+  const [isSearching, setIsSearching] = useState(false); // Track if search is being done
+  const navigate = useNavigate();
+
+  const productSections = [
     {
       title: 'Trending Electronics',
       products: [
@@ -34,10 +39,7 @@ const PublicDashboard = () => {
         { id: 12, name: 'Tablet Pro 10', price: 23000, description: '10.1-inch display', image: 'public/images/tablet.png' },
       ],
     },
-  ]);
-
-  const [cartMessage, setCartMessage] = useState('');
-  const navigate = useNavigate();
+  ];
 
   const sliderSettings = {
     dots: true,
@@ -56,14 +58,24 @@ const PublicDashboard = () => {
     ],
   };
 
-  const handleLoginClick = () => {
-    navigate('/login');
+  const handleSearch = (event) => {
+    const searchValue = event.target.value;
+    setSearchTerm(searchValue);
+    setIsSearching(searchValue.length > 0); // Set searching state based on search term
   };
 
   const handleAddToCart = (productName) => {
     setCartMessage(`${productName} has been added to your cart!`);
     setTimeout(() => setCartMessage(''), 3000);
   };
+
+  // Filter products from "Hot Deals" based on search term
+  const hotDealsProducts = productSections.find(section => section.title === 'Hot Deals').products;
+
+  // Filtered products for search, only showing "Hot Deals" matching products
+  const filteredHotDeals = hotDealsProducts.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   return (
     <div className="min-h-screen bg-white">
@@ -77,42 +89,160 @@ const PublicDashboard = () => {
         </div>
       )}
 
+      {/* Search Bar */}
+      <div className="text-center py-6">
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleSearch}
+          placeholder="Search Hot Deals..."
+          className="w-1/2 p-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
       {/* Dashboard Content */}
       <div className="container mx-auto py-12 px-6">
-        {productSections.map((section, index) => (
-          <div key={index} className="mb-20">
-            {/* Title/Section Header */}
-            <h1 className="text-4xl font-semibold text-left mb-12 tracking-wide text-gray-800">{section.title}</h1>
-
-            {/* Product Carousel */}
+        {isSearching && searchTerm && (
+          <div>
+            {/* Searched Items Section */}
+            <h1 className="text-4xl font-semibold text-left mb-12 tracking-wide text-gray-800">
+              Searched Items
+            </h1>
             <div className="px-4">
               <Slider {...sliderSettings}>
-                {section.products.map((product) => (
-                  <div key={product.id} className="px-4 transition-all transform hover:scale-105">
-                    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 ease-in-out">
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="w-full h-56 object-cover rounded-lg mb-6 transition-transform duration-300 ease-in-out hover:scale-110"
-                        onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=Image+Not+Found'; }}
-                      />
-                      <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
-                      <p className="text-gray-700 text-lg font-medium mb-4">Rs {product.price}</p>
-                      <p className="text-gray-600 text-sm mb-6">{product.description}</p>
-                      {/* Add to Cart Button */}
-                      <button
-                        className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out"
-                        onClick={() => handleAddToCart(product.name)}
-                      >
-                        Add to Cart
-                      </button>
+                {filteredHotDeals.length > 0 ? (
+                  filteredHotDeals.map((product) => (
+                    <div key={product.id} className="px-4 transition-all transform hover:scale-105">
+                      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 ease-in-out">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-56 object-cover rounded-lg mb-6 transition-transform duration-300 ease-in-out hover:scale-110"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=Image+Not+Found'; }}
+                        />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                        <p className="text-gray-700 text-lg font-medium mb-4">Rs {product.price}</p>
+                        <p className="text-gray-600 text-sm mb-6">{product.description}</p>
+                        {/* Add to Cart Button */}
+                        <button
+                          className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out"
+                          onClick={() => handleAddToCart(product.name)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p>No products found</p>
+                )}
               </Slider>
             </div>
           </div>
-        ))}
+        )}
+
+        {!isSearching && (
+          <>
+            {/* Trending Electronics Section */}
+            <div>
+              <h1 className="text-4xl font-semibold text-left mb-12 tracking-wide text-gray-800">
+                Trending Electronics
+              </h1>
+              <div className="px-4">
+                <Slider {...sliderSettings}>
+                  {productSections[0].products.map((product) => (
+                    <div key={product.id} className="px-4 transition-all transform hover:scale-105">
+                      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 ease-in-out">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-56 object-cover rounded-lg mb-6 transition-transform duration-300 ease-in-out hover:scale-110"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=Image+Not+Found'; }}
+                        />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                        <p className="text-gray-700 text-lg font-medium mb-4">Rs {product.price}</p>
+                        <p className="text-gray-600 text-sm mb-6">{product.description}</p>
+                        {/* Add to Cart Button */}
+                        <button
+                          className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out"
+                          onClick={() => handleAddToCart(product.name)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </div>
+
+            {/* Hot Deals Section */}
+            <div>
+              <h1 className="text-4xl font-semibold text-left mb-12 tracking-wide text-gray-800">
+                Hot Deals
+              </h1>
+              <div className="px-4">
+                <Slider {...sliderSettings}>
+                  {productSections[1].products.map((product) => (
+                    <div key={product.id} className="px-4 transition-all transform hover:scale-105">
+                      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 ease-in-out">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-56 object-cover rounded-lg mb-6 transition-transform duration-300 ease-in-out hover:scale-110"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=Image+Not+Found'; }}
+                        />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                        <p className="text-gray-700 text-lg font-medium mb-4">Rs {product.price}</p>
+                        <p className="text-gray-600 text-sm mb-6">{product.description}</p>
+                        {/* Add to Cart Button */}
+                        <button
+                          className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out"
+                          onClick={() => handleAddToCart(product.name)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </div>
+
+            {/* Top Picks Section */}
+            <div>
+              <h1 className="text-4xl font-semibold text-left mb-12 tracking-wide text-gray-800">
+                Top Picks
+              </h1>
+              <div className="px-4">
+                <Slider {...sliderSettings}>
+                  {productSections[2].products.map((product) => (
+                    <div key={product.id} className="px-4 transition-all transform hover:scale-105">
+                      <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 hover:shadow-2xl transition-all duration-300 ease-in-out">
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="w-full h-56 object-cover rounded-lg mb-6 transition-transform duration-300 ease-in-out hover:scale-110"
+                          onError={(e) => { e.target.onerror = null; e.target.src = 'https://placehold.co/300x200?text=Image+Not+Found'; }}
+                        />
+                        <h3 className="text-xl font-semibold text-gray-900 mb-2">{product.name}</h3>
+                        <p className="text-gray-700 text-lg font-medium mb-4">Rs {product.price}</p>
+                        <p className="text-gray-600 text-sm mb-6">{product.description}</p>
+                        {/* Add to Cart Button */}
+                        <button
+                          className="w-full py-3 text-lg font-semibold text-white bg-blue-600 rounded-md hover:bg-blue-700 transition duration-200 ease-in-out"
+                          onClick={() => handleAddToCart(product.name)}
+                        >
+                          Add to Cart
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </Slider>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
