@@ -50,8 +50,10 @@ const PublicNavbar = () => {
   return (
     <nav className="bg-white shadow-lg sticky top-0 z-50">
       <div className="container mx-auto px-6 py-4 flex justify-between items-center">
-        {/* Brand Logo */}
-        <Link to="/" className="text-3xl font-bold text-gray-800 hover:text-blue-600 transition duration-300 ease-in-out transform hover:scale-110">
+        {/* Brand Logo and Text */}
+        <Link to="/" className="flex items-center text-3xl font-bold text-gray-800 hover:text-blue-600 transition duration-300 ease-in-out transform hover:scale-110">
+          {/* Placeholder for logo */}
+          <img src="public/images/logo.png" alt="Logo" className="w-18 h-16 mr-2" /> {/* Adjust the width and height of the logo */}
           TechCycle
         </Link>
 
